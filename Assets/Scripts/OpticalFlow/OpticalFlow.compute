@@ -1,0 +1,92 @@
+// ! check this https://github.com/mattatz/unity-optical-flow/blob/master/Assets/OpticalFlow/Shaders/OpticalFlow.shader
+#pragma kernel CSMain
+
+uniform RWTexture2D<float4> _OpticalFlowMap;
+uniform Texture2D<float4> _Current;
+uniform Texture2D<float4> _Previous;
+uniform float2  _Size;
+uniform float   _Threshold        = 0.01; //framedifferencing Threshold //not necessary here as we work in pure black and white
+uniform float   _Lambda           = 0.01;
+uniform float2  _Scale            = float2(10.0, 10.0);
+
+float4 PackFlowAsColor(float fx ,float fy, float2 scale){
+	float2 flowX = float2(max(fx, 0.0), abs(min(fx, 0.0))) * scale.x;
+	float2 flowY = float2(max(fy, 0.0), abs(min(fy, 0.0))) * scale.y;
+
+	float dirY = 1.0;
+	if(flowY.x > flowY.y){
+		dirY = 0.9;
+	}
+
+	float4 rgbaPacked = float4(flowX.x, flowX.y, max(flowY.x, flowY.y), dirY);
+
+	return rgbaPacked;
+}
+
+/*Use this method to decode direction vector inside a frgament shader*/
+/*
+float2 UnpackColorFlow(Texture2D tex, float2 texCoord){
+	float4 rgba = texture2D(tex, texCoord);
+	if(rgba.w > 0.95){
+		rgba.z = rgba.z * -1;
+	}
+	return float2(-1 * (rgba.y - rgba.x), rgba.z);
+}
+*/
+
+float4 GetGray(float4 inputPix){
+	float gray = dot(float3(inputPix.x, inputPix.y, inputPix.z), float3(0.3, 0.59, 0.11));
+	return float4(gray, gray, gray, 1.0);
+}
+
+float4 GetGrayTexture(Texture2D tex, uint2 id){
+	return GetGray(tex.Load(uint3(id, 0)));
+}
+
+float4 GetGradient(Texture2D current, Texture2D previous, uint2 id, uint2 offset){
+    float4 gradient     = GetGrayTexture(previous, id + offset) - GetGrayTexture(previous, id - offset);
+	gradient            += GetGrayTexture(current, id + offset) - GetGrayTexture(current, id - offset);
+    return gradient;
+}
+
+[numthreads(32,32,1)]
+void CSMain (uint2 id : SV_DispatchThreadID){
+    float aspectRatio   = _Size.x / _Size.y;
+    float2 uv           = float2(id.x/_Size.x, id.y/_Size.y);
+    
+    float4 currentrgb   = _Current.Load(uint3(id, 0));
+    float4 previousrgb  = _Previous.Load(uint3(id, 0));
+
+
+    //Step 1: get the frame difference betwen previous and current
+    float4 diff             = previousrgb - currentrgb;
+    // float mvt            = smoothstep(threshold, 1.0, diff.r); //not necessary here as we work in pure black and white
+
+    //Step 2: compute the gradient per axis (like a sobel operator)
+    float4 gradX            = GetGradient(_Current, _Previous, id, uint2(1, 0) * uint2(1, 1));
+    float4 gradY            = GetGradient(_Current, _Previous, id, uint2(0, 1) * uint2(1, 1));
+
+    //Step 3: compute the gradient magnidute
+    float4 gradMag          = sqrt((gradX * gradX) + (gradY * gradY) + float4(_Lambda, _Lambda, _Lambda, _Lambda));
+    
+    //Step 4: compute the flow
+    float4 velX             = diff * (gradX / gradMag);
+    float4 velY             = diff * (gradY / gradMag);
+
+
+    float4 invGmag = 1.0 / gradMag;
+    float4 vx = diff * (gradX * invGmag);
+    float4 vy = diff * (gradY * invGmag);
+
+    float2 flow = float2(0, 0);
+    const float inv3 = 0.33333;
+    flow.x = -(vx.x + vx.y + vx.z) * inv3;
+    flow.y = -(vy.x + vy.y + vy.z) * inv3;
+
+    float w = length(flow);
+    float nw = (w - _Threshold) / (1.0 - _Threshold);
+    flow = lerp(float2(0, 0), normalize(flow) * nw * _Scale, step(_Threshold, w));
+    
+    _OpticalFlowMap[id.xy]   = float4(flow, 0, 1);
+    // _OpticalFlowMap[id.xy]   = PackFlowAsColor(velX.x, velY.x, _Scale);;
+}
