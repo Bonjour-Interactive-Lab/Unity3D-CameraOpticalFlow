@@ -172,7 +172,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 9a51210704fca534ea80f97c6e9ea2a2, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -516,6 +516,7 @@ GameObject:
   - component: {fileID: 1889452964}
   - component: {fileID: 1889452962}
   - component: {fileID: 1889452965}
+  - component: {fileID: 1889452963}
   m_Layer: 0
   m_Name: Controller
   m_TagString: Untagged
@@ -539,6 +540,21 @@ MonoBehaviour:
   _resolution: {x: 1920, y: 1080}
   _frameRate: 60
   targetBuffer: {fileID: 8400000, guid: 9526e9004348e4748a239d37cc7eb0eb, type: 2}
+--- !u!114 &1889452963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1889452961}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d45d7763f083be6418b94777fcdb9314, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _texture: {fileID: 8600000, guid: 1174ecd6339449b41afb4c3acc4b6215, type: 2}
+  _stepsPerFrame: 4
+  CRTMat: {fileID: 2100000, guid: 7157de7f174ce6e4dbb56856837eb11d, type: 2}
 --- !u!4 &1889452964
 Transform:
   m_ObjectHideFlags: 0
@@ -569,8 +585,8 @@ MonoBehaviour:
   opticalFlowHeight: 1080
   resolution: 1
   compute: {fileID: 7200000, guid: 7073d83351df04e41bde78e6b89e5f7a, type: 3}
-  lambda: 0.01
-  threshold: 0.01
+  lambda: 0.05
+  threshold: 0.05
   scale: {x: 5, y: 5}
   blurType: 13
   blurSize: 100
@@ -580,4 +596,4 @@ MonoBehaviour:
   current: {fileID: 0}
   previous: {fileID: 0}
   showOpticalFlowMap: 1
-  debugMapScale: 1
+  debugMapScale: 0.25
