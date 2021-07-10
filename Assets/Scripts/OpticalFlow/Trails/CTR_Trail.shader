@@ -3,7 +3,7 @@ Shader "Hidden/CustomRenderTexture/Trail"
     Properties
     {
         _NewFrame ("New Frame to add", 2D) = "white" {}
-        _TrailForce("Trail Force", Range(.9, 1)) = .5
+        _TrailForce("Trail Force", Range(.9, 1)) = .9
     }
     CGINCLUDE
     #include "UnityCustomRenderTexture.cginc"

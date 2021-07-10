@@ -536,10 +536,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c21a6d3ef9c8e4e4eb235ab71f2ff1ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _deviceName: Blackmagic WDM Capture
-  _resolution: {x: 1920, y: 1080}
-  _frameRate: 60
+  deviceName: Blackmagic WDM Capture
+  resolution: {x: 1920, y: 1080}
+  frameRate: 30
   targetBuffer: {fileID: 8400000, guid: 9526e9004348e4748a239d37cc7eb0eb, type: 2}
+  clampFPSToCameraFPS: 1
 --- !u!114 &1889452963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -549,12 +550,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1889452961}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d45d7763f083be6418b94777fcdb9314, type: 3}
+  m_Script: {fileID: 11500000, guid: ef3394bbf4b367b41b57d024d98f5177, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _texture: {fileID: 8600000, guid: 1174ecd6339449b41afb4c3acc4b6215, type: 2}
-  _stepsPerFrame: 4
-  CRTMat: {fileID: 2100000, guid: 7157de7f174ce6e4dbb56856837eb11d, type: 2}
+  stepsPerFrame: 4
+  trailPower: 0.98
+  debugMaterial: {fileID: 2100000, guid: 9a51210704fca534ea80f97c6e9ea2a2, type: 2}
 --- !u!4 &1889452964
 Transform:
   m_ObjectHideFlags: 0
