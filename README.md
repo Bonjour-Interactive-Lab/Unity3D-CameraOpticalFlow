@@ -1,5 +1,5 @@
 # Unity3D-CameraOpticalFlow
-![gif](https://imgur.com/m3ZFjz2);
+![gif](https://imgur.com/m3ZFjz2)
 
 *CameraOpticalFlow* is a GPU based optical flow system for unity.
 
