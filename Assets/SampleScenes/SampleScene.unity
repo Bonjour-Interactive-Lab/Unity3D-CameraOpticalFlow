@@ -617,7 +617,7 @@ MonoBehaviour:
   averageVelocityRessource: {fileID: 11400000, guid: ecaf92130a6163443a71ae334a47649d,
     type: 2}
   isComputedOnTrail: 1
-  resolution: 4
+  resolution: 8
   threshold: 0.1
   averageVelocity: {x: 0, y: 0}
   logBufferSize: 1

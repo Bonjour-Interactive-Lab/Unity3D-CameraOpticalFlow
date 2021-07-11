@@ -52,22 +52,22 @@ namespace Bonjour.Vision
             of      = this.GetComponent<OpticalFlow>();
             trail   = this.GetComponent<OFTrailSystemUpdater>();
             
-            //Init RT
-            sourceCopy = new RenderTexture((of.opticalFlowWidth/of.resolution)/resolution, (of.opticalFlowHeight/of.resolution)/resolution, 24, RenderTextureFormat.ARGBFloat);
-
             //Init Compute Buffer
             compute         = Instantiate(averageVelocityRessource.averageVelocityCS);
             kernelHandle    = compute.FindKernel("CSMain");
-
             compute.SetBuffer(kernelHandle, "_AverageVelocity", averageVelocityBuffer);
-            compute.SetTexture(kernelHandle, "_Source", sourceCopy);
-            compute.SetVector("_Resolution", new Vector2(sourceCopy.width, sourceCopy.height));
-
-            if(logBufferSize) Debug.Log($"Average buffer source size set at: {sourceCopy.width}×{sourceCopy.height}");
         }
 
         private void ComputeAverageVelocity(){
             if(trail && trail.GetOFTrail() == null) return; //Trail is created at first loop so we need to jump this frame (lazy implementation ;))
+
+            if(sourceCopy == null){
+                //Lazzy RT creation to avoid getting a RT size of 0 due to Start() order
+                sourceCopy = new RenderTexture(of.opticalFlowWidth/resolution, of.opticalFlowHeight/resolution, 24, RenderTextureFormat.ARGBFloat);
+                compute.SetTexture(kernelHandle, "_Source", sourceCopy);
+                compute.SetVector("_Resolution", new Vector2(sourceCopy.width, sourceCopy.height));
+                if(logBufferSize) Debug.Log($"Average buffer source size set at: {sourceCopy.width}×{sourceCopy.height}");
+            }
 
             Graphics.Blit(isComputedOnTrail ? trail.GetOFTrail() : of.GetOpticalFlowMap(), sourceCopy);
             
