@@ -1,0 +1,37 @@
+#pragma kernel CSMain
+
+uniform RWStructuredBuffer<float2>  _AverageVelocity;
+uniform Texture2D<float4>           _Source;
+uniform float2                      _Resolution;
+uniform float                       _Threshold;
+
+[numthreads(1,1,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    uint width;
+    uint height;
+    // #if defined(SHADER_API_D3D11)
+    //     uint levels;
+    //     _Source.GetDimensions(0, width, height, levels);
+    // #else
+        width = (uint) _Resolution.x;
+        height = (uint) _Resolution.y;
+    // #endif
+
+    float2 globalVelocity = float2(0, 0);
+    float inc;
+    for(uint y = 0; y<height; y++){
+        for(uint x = 0; x<width; x++){
+            float2 velocityAtPixel = _Source.Load(uint3(x, y, 0)).rg;
+            if(length(velocityAtPixel) > 0.1){
+                globalVelocity += velocityAtPixel;
+                inc ++;
+            }
+        }
+    }
+    if(inc > 0){
+        globalVelocity = globalVelocity / inc;
+    }
+
+    _AverageVelocity[id.x] = globalVelocity;
+}

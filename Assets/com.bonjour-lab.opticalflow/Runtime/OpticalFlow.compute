@@ -73,8 +73,7 @@ void CSMain (uint2 id : SV_DispatchThreadID){
     float4 velX             = diff * (gradX / gradMag);
     float4 velY             = diff * (gradY / gradMag);
 
-
-    float4 invGmag = 1.0 / gradMag;
+    float4 invGmag = (gradMag > 0) ? 1.0 / gradMag : 1.0;
     float4 vx = diff * (gradX * invGmag);
     float4 vy = diff * (gradY * invGmag);
 
@@ -86,7 +85,9 @@ void CSMain (uint2 id : SV_DispatchThreadID){
     float w = length(flow);
     float nw = (w - _Threshold) / (1.0 - _Threshold);
     flow = lerp(float2(0, 0), normalize(flow) * nw * _Scale, step(_Threshold, w));
-    
+    // flow = clamp(flow, -_Scale, _Scale);
+    flow = length(flow) > 0 ? flow : float2(0, 0);
+
     _OpticalFlowMap[id.xy]   = float4(flow, 0, 1);
     // _OpticalFlowMap[id.xy]   = PackFlowAsColor(velX.x, velY.x, _Scale);;
 }

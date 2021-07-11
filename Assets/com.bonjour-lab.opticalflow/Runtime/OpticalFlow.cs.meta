@@ -3,7 +3,12 @@ guid: 03aca440c12088441bf45dfcb9f1ad96
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - opticalFlowRessource: {fileID: 11400000, guid: 18a88983527281943a7c602c5a8777cf,
+      type: 2}
+  - sourceToAnalyze: {instanceID: 0}
+  - current: {instanceID: 0}
+  - previous: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

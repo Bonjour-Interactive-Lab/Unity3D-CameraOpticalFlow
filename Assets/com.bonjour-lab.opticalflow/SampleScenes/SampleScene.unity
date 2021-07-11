@@ -180,7 +180,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 8400000, guid: 9526e9004348e4748a239d37cc7eb0eb, type: 2}
+  m_Texture: {fileID: 8400000, guid: 63b85b8b6b37bc24894bc8ae88daa1dc, type: 2}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -517,6 +517,7 @@ GameObject:
   - component: {fileID: 1889452962}
   - component: {fileID: 1889452965}
   - component: {fileID: 1889452963}
+  - component: {fileID: 1889452966}
   m_Layer: 0
   m_Name: Controller
   m_TagString: Untagged
@@ -538,9 +539,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   deviceName: Blackmagic WDM Capture
   resolution: {x: 1920, y: 1080}
-  frameRate: 30
-  targetBuffer: {fileID: 8400000, guid: 9526e9004348e4748a239d37cc7eb0eb, type: 2}
-  clampFPSToCameraFPS: 1
+  frameRate: 60
+  targetBuffer: {fileID: 8400000, guid: 63b85b8b6b37bc24894bc8ae88daa1dc, type: 2}
+  clampFPSToCameraFPS: 0
+  horMirror: 0
+  vertMirror: 0
 --- !u!114 &1889452963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -582,19 +585,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03aca440c12088441bf45dfcb9f1ad96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  opticalFlowRessource: {fileID: 11400000, guid: 18a88983527281943a7c602c5a8777cf,
+    type: 2}
+  resolution: 1
   opticalFlowWidth: 1920
   opticalFlowHeight: 1080
-  resolution: 1
-  compute: {fileID: 7200000, guid: 7073d83351df04e41bde78e6b89e5f7a, type: 3}
   lambda: 0.05
   threshold: 0.05
   scale: {x: 5, y: 5}
   blurType: 13
   blurSize: 100
-  sourceToAnalyze: {fileID: 8400000, guid: 9526e9004348e4748a239d37cc7eb0eb, type: 2}
+  sourceToAnalyze: {fileID: 8400000, guid: 63b85b8b6b37bc24894bc8ae88daa1dc, type: 2}
   mirrorHor: 0
-  denoiserShader: {fileID: 4800000, guid: 93bf8eaac796ad342a9c70ce2aeddbce, type: 3}
   current: {fileID: 0}
   previous: {fileID: 0}
   showOpticalFlowMap: 1
   debugMapScale: 0.25
+  logBufferSize: 1
+--- !u!114 &1889452966
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1889452961}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd932752727cbeb42a9c710bc81239a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  averageVelocityRessource: {fileID: 11400000, guid: ecaf92130a6163443a71ae334a47649d,
+    type: 2}
+  isComputedOnTrail: 1
+  resolution: 4
+  threshold: 0.1
+  averageVelocity: {x: 0, y: 0}
+  logBufferSize: 1

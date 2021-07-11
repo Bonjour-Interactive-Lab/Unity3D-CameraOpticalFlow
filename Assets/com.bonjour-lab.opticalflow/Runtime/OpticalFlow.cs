@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Bonjour.Vision.Ressources;
 
 // ? Quid to set an iterable system for the denoiser and/or gaussian ?
 namespace Bonjour.Vision
@@ -17,29 +18,31 @@ namespace Bonjour.Vision
             HIGH = 9,
             ULTRA = 13
         };
+        [Header("Ressource")]
+        public OpticalFlowRessourceSet opticalFlowRessource;
 
         //Compute shader
         [Header("OpticalFlow Params")]
+        [Tooltip("Defines the scale resolution from the source")] public int resolution = 1;
+        private int kernelHandle;
+        [Tooltip("Defines the compute Shader to use for Optical flow")] private ComputeShader compute;
+        private RenderTexture opticalFlow;
         [HideInInspector] public int opticalFlowWidth;
         [HideInInspector] public int opticalFlowHeight;
-        [Tooltip("Defines the scale resolution from the source")] public int resolution;
-        private int kernelHandle;
-        [Tooltip("Defines the compute Shader to use for Optical flow")] public ComputeShader compute;
-        private RenderTexture opticalFlow;
 
         [Range(0, 1)]
-        public float lambda = 0.01f;
+        [Tooltip("Lambda deviation on the gradient magnitude")] public float lambda = 0.01f;
         [Range(0, 1)]
-        public float threshold = 0.01f;
-        public Vector2 scale = new Vector2(1.0f, 1.0f);
+        [Tooltip("Velocity threshold")] public float threshold = 0.01f;
+        [Tooltip("Scale up velocity")] public Vector2 scale = new Vector2(1.0f, 1.0f);
         private Material gaussianBlur;
         [Tooltip("Define the type of blur")] public BlurType blurType = BlurType.ULTRA;
-        [Tooltip("Define the amount of blur for the output")] [Range(1f, 100f)] public float blurSize = 1f;
+        [Tooltip("Define the amount of blur for the output")] [Range(1f, 100f)] public float blurSize = 25f;
 
         [Header("Source images")]
         [Tooltip("Source image to analyze")] public RenderTexture sourceToAnalyze;
         [Tooltip("Horizontal mirror on the source image")] public bool mirrorHor = false;
-        [Tooltip("Define a denoiser methods for source")] public Shader denoiserShader;
+        [Tooltip("Define a denoiser methods for source")] private Shader denoiserShader;
         private bool useDenoiser;
         private Material denoiser;
         [HideInInspector] public RenderTexture current;
@@ -47,10 +50,11 @@ namespace Bonjour.Vision
         private Vector2 rtScale, rtOffset;
 
         [Header("Debug")]
-        public bool showOpticalFlowMap;
-        public float debugMapScale;
+        [Tooltip("Show GUITexture for debug")] public bool showOpticalFlowMap;
+        [Tooltip("Scale GUITexture")] public float debugMapScale = .25f;
         private RenderTexture debugView;
         private Material debugViewer;
+        [Tooltip("Log the size of the buffer")] public bool logBufferSize;
 
 
         private void Awake()
@@ -78,7 +82,6 @@ namespace Bonjour.Vision
 
         private void InitBuffers()
         {
-            kernelHandle = compute.FindKernel("CSMain");
 
             opticalFlow = new RenderTexture(opticalFlowWidth, opticalFlowHeight, 24, RenderTextureFormat.ARGBFloat);
             opticalFlow.filterMode = FilterMode.Trilinear;
@@ -87,12 +90,14 @@ namespace Bonjour.Vision
             opticalFlow.Create();
 
             //Bind variable to CS
+            compute = Instantiate(opticalFlowRessource.opticalFlowCS);
+            kernelHandle = compute.FindKernel("CSMain");
             compute.SetTexture(kernelHandle, "_OpticalFlowMap", opticalFlow);
             compute.SetVector("_Size", new Vector2((float)opticalFlow.width, (float)opticalFlow.height));
             compute.SetTexture(kernelHandle, "_Previous", previous);
             compute.SetTexture(kernelHandle, "_Current", current);
 
-            Debug.Log("Buffers init at: " + opticalFlow.width + "×" + opticalFlow.height);
+            if(logBufferSize) Debug.Log($"Optical flow size set at: {opticalFlow.width}×{opticalFlow.height}");
         }
 
         private void InitSources()
@@ -123,7 +128,7 @@ namespace Bonjour.Vision
             if (denoiserShader != null)
             {
                 useDenoiser = true;
-                denoiser = new Material(denoiserShader);
+                denoiser = new Material(opticalFlowRessource.denoiser);
             }
         }
 
@@ -227,5 +232,6 @@ namespace Bonjour.Vision
         {
             return this.opticalFlow;
         }
+
     }
 }

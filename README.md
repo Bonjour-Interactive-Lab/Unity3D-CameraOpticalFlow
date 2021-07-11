@@ -15,6 +15,11 @@ It grab the result from ```OpticalFlow.cs```
 The results is return as a CustomRenderTexture in an ARGBFloat format.
 You could get the result of the OF from script by calling ```OFTrailSystemUpdater.GetOFTrail()```
 
+### AverageVelocity.cs
+This script compute the average velocity from the OF texture.
+Please note: this computation can be pretty intensive as it loop over all the pixel of the image. Use it with a lower resolution defined by the var ```resolution```
+The result can be grab using ```AverageVelocity.GetAverageVelocity()```
+
 
 Test on
 -------

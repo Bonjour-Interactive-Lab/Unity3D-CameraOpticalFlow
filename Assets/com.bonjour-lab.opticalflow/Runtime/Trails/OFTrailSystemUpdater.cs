@@ -1,8 +1,6 @@
 using UnityEngine;
 using Bonjour.Vision;
 
-// todo : Create controller to handle Trail↔OF binding
-// todo : Create CRT from code using binding params
 namespace Bonjour.Vision
 {
     public class OFTrailSystemUpdater : MonoBehaviour
