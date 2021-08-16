@@ -19,6 +19,7 @@ You could get the result of the OF from script by calling ```OFTrailSystemUpdate
 This script compute the average velocity from the OF texture.
 Please note: this computation can be pretty intensive as it loop over all the pixel of the image. Use it with a lower resolution defined by the var ```resolution```
 The result can be grab using ```AverageVelocity.GetAverageVelocity()```
+The ```AverageVelocity.GetAverageVelocity()``` function return a Vector3 discribing the average velocity in XY component and the max magnitude in the Z component (if needed for normalization)
 
 ### Install Package
 This package uses the scoped registry feature to import dependent packages.
