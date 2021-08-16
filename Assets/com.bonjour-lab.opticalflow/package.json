@@ -1,7 +1,7 @@
     {
       "name": "com.bonjour-lab.opticalflow",
       "displayName": "Bonjour Lab - GPU Optical Flow utility",
-      "version": "1.0.2",
+      "version": "1.0.3",
       "unity": "2019.3",
       "description": "GPU Optical Flow is a utility tools set to compuite Optical Flow, trail and average Velocity into GPU",
       "keywords": [

@@ -18,8 +18,8 @@ namespace Bonjour.Vision
         [Tooltip("Define the range for min velocity")] public float threshold = 0.1f;
         
 
-        [HideInInspector] public Vector2 averageVelocity;
-        private Vector2[] averageArray  = new Vector2[1];
+        [HideInInspector] public Vector3 averageVelocity;
+        private Vector3[] averageArray  = new Vector3[1];
 
         private OpticalFlow of;
         private OFTrailSystemUpdater trail;
@@ -45,7 +45,7 @@ namespace Bonjour.Vision
             //init average vel + buffer
             averageVelocity         = Vector2.zero;
             averageArray[0]         = averageVelocity;
-            averageVelocityBuffer   = new ComputeBuffer(1, sizeof(float) * 2);
+            averageVelocityBuffer   = new ComputeBuffer(1, sizeof(float) * 3);
             averageVelocityBuffer.SetData(averageArray);
 
             //Get OF or Trail
@@ -75,7 +75,7 @@ namespace Bonjour.Vision
             compute.Dispatch(kernelHandle, 1, 1, 1);
 
             averageVelocityBuffer.GetData(averageArray);
-            averageVelocity = (Vector2) averageArray[0];
+            averageVelocity = (Vector3) averageArray[0];
         }
 
         private void OnDisable()
@@ -86,7 +86,7 @@ namespace Bonjour.Vision
             }
         }
 
-        public Vector2 GetAverageVelocity(){
+        public Vector3 GetAverageVelocity(){
             return averageVelocity;
         }
 

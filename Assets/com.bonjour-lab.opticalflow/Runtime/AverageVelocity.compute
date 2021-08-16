@@ -1,6 +1,6 @@
 #pragma kernel CSMain
 
-uniform RWStructuredBuffer<float2>  _AverageVelocity;
+uniform RWStructuredBuffer<float3>  _AverageVelocity;
 uniform Texture2D<float4>           _Source;
 uniform float2                      _Resolution;
 uniform float                       _Threshold;
@@ -19,12 +19,14 @@ void CSMain (uint3 id : SV_DispatchThreadID)
     // #endif
 
     float2 globalVelocity = float2(0, 0);
+    float maxVelocity = 0;
     float inc;
     for(uint y = 0; y<height; y++){
         for(uint x = 0; x<width; x++){
             float2 velocityAtPixel = _Source.Load(uint3(x, y, 0)).rg;
             if(length(velocityAtPixel) > 0.1){
                 globalVelocity += velocityAtPixel;
+                maxVelocity = max(maxVelocity, length(velocityAtPixel));
                 inc ++;
             }
         }
@@ -33,5 +35,5 @@ void CSMain (uint3 id : SV_DispatchThreadID)
         globalVelocity = globalVelocity / inc;
     }
 
-    _AverageVelocity[id.x] = globalVelocity;
+    _AverageVelocity[id.x] = float3(globalVelocity, maxVelocity);
 }
